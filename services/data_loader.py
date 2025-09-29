@@ -1,4 +1,5 @@
 import json
+import re
 from typing import List, Tuple
 from models.management_company import ManagementCompany
 from models.apartment import Apartment
@@ -62,7 +63,9 @@ def read_counters_data(management_company: ManagementCompany,
         f.readline()
 
         for line in f:
-            type, date, count = line.strip().split(' ')
+            type = re.search(r'"[а-яА-Я]+"', line).group()
+            date = re.search(r'\d\d\d\d.\d\d.\d\d', line).group()
+            count = re.search(r'(?<!\d\.)\b\d+\b(?!\.\d)', line).group()
             counters_data.append((type, date, int(count)))
 
     return counters_data
